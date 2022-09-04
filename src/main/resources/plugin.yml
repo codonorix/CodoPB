@@ -1,0 +1,8 @@
+name: CodoPB
+version: '${project.version}'
+main: za.co.codonorix.codopb.CodoPB
+api-version: 1.19
+authors: [ logan2971 ]
+commands:
+  createArena:
+    description: Go into the arena creator.
