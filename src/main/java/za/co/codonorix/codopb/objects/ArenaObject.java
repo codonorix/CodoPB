@@ -15,8 +15,9 @@ public class ArenaObject {
 	private Location spawnOne;
 	private Location spawnTwo;
 	private boolean running;
+	private int currentPlayers;
 
-	public ArenaObject(Component name, int minPlayers, int maxPlayers, ArrayList<PlayerObject> teamOne, ArrayList<PlayerObject> teamTwo, Location waitingLobby, Location spawnOne, Location spawnTwo, boolean running) {
+	public ArenaObject(Component name, int minPlayers, int maxPlayers, ArrayList<PlayerObject> teamOne, ArrayList<PlayerObject> teamTwo, Location waitingLobby, Location spawnOne, Location spawnTwo, boolean running, int currentPlayers) {
 		this.name = name;
 		this.minPlayers = minPlayers;
 		this.maxPlayers = maxPlayers;
@@ -26,6 +27,7 @@ public class ArenaObject {
 		this.spawnOne = spawnOne;
 		this.spawnTwo = spawnTwo;
 		this.running = running;
+		this.currentPlayers = currentPlayers;
 	}
 
 	public Component getName() {
@@ -98,5 +100,13 @@ public class ArenaObject {
 
 	public void setRunning(boolean running) {
 		this.running = running;
+	}
+
+	public int getCurrentPlayers() {
+		return currentPlayers;
+	}
+
+	public void setCurrentPlayers(int currentPlayers) {
+		this.currentPlayers = currentPlayers;
 	}
 }

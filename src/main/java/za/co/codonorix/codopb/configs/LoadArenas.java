@@ -35,15 +35,11 @@ public class LoadArenas {
 			Location spawn2 = (Location) arenaDataList[7];
 			boolean running = (Boolean) arenaDataList[8];
 
-			ArenaObject newArena = new ArenaObject(name, minPlayers, maxPlayers, teamOne, teamTwo, waitingLobby, spawn1, spawn2, running);
+			ArenaObject newArena = new ArenaObject(name, minPlayers, maxPlayers, teamOne, teamTwo, waitingLobby, spawn1, spawn2, running, 0);
 
 			TextComponent arenaName = (TextComponent) name;
 			GameData.arenas.put(arenaName.content(), newArena);
 
-			System.out.println("=================================");
-			System.out.println("ARENA ADDED");
-			System.out.println(GameData.arenas);
-			System.out.println("====================================");
 		}
 	}
 }

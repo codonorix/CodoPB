@@ -104,7 +104,7 @@ public class ArenaSetup {
 							player.getInventory().setContents(playerInventories.get(player));
 							playerInventories.remove(player);
 
-							ArenaObject arenaObject = new ArenaObject(name, minPlayers, maxPlayers, new ArrayList<PlayerObject>(), new ArrayList<PlayerObject>(), waitingLobby, spawnOne, spawnTwo, false);
+							ArenaObject arenaObject = new ArenaObject(name, minPlayers, maxPlayers, new ArrayList<PlayerObject>(), new ArrayList<PlayerObject>(), waitingLobby, spawnOne, spawnTwo, false, 0);
 							new AddArenaToConfig().createArena(arenaObject);
 							TextComponent textComponent = (TextComponent) arenaObject.getName();
 							GameData.arenas.put(textComponent.content(), arenaObject);
