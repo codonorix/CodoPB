@@ -10,7 +10,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import za.co.codonorix.codopb.CodoPB;
+import za.co.codonorix.codopb.GameData;
 import za.co.codonorix.codopb.configs.AddArenaToConfig;
+import za.co.codonorix.codopb.configs.LoadArenas;
 import za.co.codonorix.codopb.helper_classes.ItemCreator;
 import za.co.codonorix.codopb.objects.ArenaObject;
 import za.co.codonorix.codopb.objects.PlayerObject;
@@ -38,6 +40,7 @@ public class ArenaSetup {
 		}else{
 			setupStage.put(player, 0);
 			playerInventories.put(player, player.getInventory().getContents());
+			player.getInventory().clear();
 		}
 
 		new BukkitRunnable() {
@@ -103,6 +106,9 @@ public class ArenaSetup {
 
 							ArenaObject arenaObject = new ArenaObject(name, minPlayers, maxPlayers, new ArrayList<PlayerObject>(), new ArrayList<PlayerObject>(), waitingLobby, spawnOne, spawnTwo, false);
 							new AddArenaToConfig().createArena(arenaObject);
+							TextComponent textComponent = (TextComponent) arenaObject.getName();
+							GameData.arenas.put(textComponent.content(), arenaObject);
+
 							firstRun = true;
 							player.sendMessage("Arena created!");
 							cancel();
@@ -112,6 +118,7 @@ public class ArenaSetup {
 							firstRun = true;
 							player.sendMessage(Component.text("Exiting arena creator.").color(TextColor.color(255, 0, 255)));
 							player.getInventory().clear();
+							player.getInventory().setContents(playerInventories.get(player));
 							cancel();
 							break;
 					}

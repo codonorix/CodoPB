@@ -16,8 +16,9 @@ public class PlayerObject {
 	private int totalcoins;
 	private int totalKills;
 	private int totalWins;
+	private boolean inGame;
 
-	public PlayerObject(Player player, ArrayList<String> unlockedHats, String selectedHat, HashMap<String, Integer> perks, ArrayList<String> unlockedKillsteaks, String killPrefix, ArrayList<String> unlockedKillPrefixs, int totalcoins, int totalKills, int totalWins) {
+	public PlayerObject(Player player, ArrayList<String> unlockedHats, String selectedHat, HashMap<String, Integer> perks, ArrayList<String> unlockedKillsteaks, String killPrefix, ArrayList<String> unlockedKillPrefixs, int totalcoins, int totalKills, int totalWins, boolean inGame) {
 		this.player = player;
 		this.unlockedHats = unlockedHats;
 		this.selectedHat = selectedHat;
@@ -28,6 +29,7 @@ public class PlayerObject {
 		this.totalcoins = totalcoins;
 		this.totalKills = totalKills;
 		this.totalWins = totalWins;
+		this.inGame = inGame;
 	}
 
 	public Player getPlayer() {

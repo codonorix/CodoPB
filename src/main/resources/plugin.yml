@@ -6,3 +6,5 @@ authors: [ logan2971 ]
 commands:
   createArena:
     description: Go into the arena creator.
+  listarenas:
+    description: List all PB arenas.

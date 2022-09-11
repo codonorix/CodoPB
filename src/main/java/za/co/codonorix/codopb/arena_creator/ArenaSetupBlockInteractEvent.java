@@ -47,7 +47,7 @@ public class ArenaSetupBlockInteractEvent implements Listener {
 					Location clickedBlockLocation = event.getClickedBlock().getLocation();
 					setWaitingLobby(dataContainer, player, clickedBlockLocation);
 				}else{
-					ArenaSetup.waitingLobby = waitingLobbyLocation;
+					ArenaSetup.waitingLobby = waitingLobbyPlaceHolderLocation;
 
 					//Reseting the waiting lobby arena, it's set in the above line.
 					waitingLobbyLocation = null;
@@ -72,10 +72,12 @@ public class ArenaSetupBlockInteractEvent implements Listener {
 					Location clickedBlockLocation = event.getClickedBlock().getLocation();
 					setTeamLobby(dataContainer, player, clickedBlockLocation);
 				}else{
-					ArenaSetup.waitingLobby = waitingLobbyLocation;
+					ArenaSetup.spawnOne = teamOnePlaceHolder;
+					ArenaSetup.spawnTwo = teamTwoPlaceHolder;
 
 					//Reseting the waiting lobby arena, it's set in the above line.
-					waitingLobbyLocation = null;
+					teamOnePlaceHolder = null;
+					teamTwoPlaceHolder = null;
 
 					ArenaSetup.setupStage.replace(player, 5);
 					ArenaSetup.firstRun = true;
