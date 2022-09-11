@@ -11,11 +11,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import za.co.codonorix.codopb.CodoPB;
 
-import java.util.ArrayList;
-
 public class ArenaSetupBlockInteractEvent implements Listener {
 	Location waitingLobbyLocation = null;
-	Location placeHolderLocation = null;
+	Location waitingLobbyPlaceHolderLocation = null;
+	Location teamOneLocation = null;
+	Location teamTwoLocation = null;
+	Location teamOnePlaceHolder = null;
+	Location teamTwoPlaceHolder = null;
 
 	@EventHandler
 	public void onItemInteractEvent(PlayerInteractEvent event) {
@@ -25,48 +27,121 @@ public class ArenaSetupBlockInteractEvent implements Listener {
 
 		int stage = ArenaSetup.setupStage.get(player);
 		PersistentDataContainer dataContainer = event.getItem().getItemMeta().getPersistentDataContainer();
+		NamespacedKey confirmKey = new NamespacedKey(CodoPB.getInstance(), "CONFIRM");
+		boolean completed = false;
 
 		switch (stage) {
 			case 3:
-				if (event.getClickedBlock() == null) {
-					player.sendMessage(Component.text("Please look at a valid block.", TextColor.color(255, 0, 20)));
-					return;
-				}
-				Location clickedBlockLocation = event.getClickedBlock().getLocation();
-				Location waitingLobbyLocation = waitingLobby(dataContainer, player, clickedBlockLocation);
-
-				if (waitingLobbyLocation == null) {
-					return;
+				if (event.getAction().isRightClick() && event.getItem().getItemMeta().getPersistentDataContainer().has(confirmKey)) {
+					Location waitingLobbyConfirm = confirmWaitingLobby(event.getItem().getItemMeta().getPersistentDataContainer(), event.getPlayer());
+					if(waitingLobbyConfirm != null) completed = true;
+					else return;
 				}
 
-				ArenaSetup.waitingLobby = waitingLobbyLocation;
-				waitingLobbyLocation = null;
-				ArenaSetup.setupStage.replace(player, 4);
+				if (!completed) {
+					if (event.getClickedBlock() == null) {
+						player.sendMessage(Component.text("Please look at a valid block.", TextColor.color(255, 0, 20)));
+						return;
+					}
 
+					Location clickedBlockLocation = event.getClickedBlock().getLocation();
+					setWaitingLobby(dataContainer, player, clickedBlockLocation);
+				}else{
+					ArenaSetup.waitingLobby = waitingLobbyLocation;
+
+					//Reseting the waiting lobby arena, it's set in the above line.
+					waitingLobbyLocation = null;
+
+					ArenaSetup.setupStage.replace(player, 4);
+					ArenaSetup.firstRun = true;
+				}
+				break;
+			case 4:
+				if (event.getAction().isRightClick() && event.getItem().getItemMeta().getPersistentDataContainer().has(confirmKey)) {
+					boolean teamLobbyConfirm = confirmTeamSpawns(event.getItem().getItemMeta().getPersistentDataContainer(), event.getPlayer());
+					if(teamLobbyConfirm) completed = true;
+					else return;
+				}
+
+				if (!completed) {
+					if (event.getClickedBlock() == null) {
+						player.sendMessage(Component.text("Please look at a valid block.", TextColor.color(255, 0, 20)));
+						return;
+					}
+
+					Location clickedBlockLocation = event.getClickedBlock().getLocation();
+					setTeamLobby(dataContainer, player, clickedBlockLocation);
+				}else{
+					ArenaSetup.waitingLobby = waitingLobbyLocation;
+
+					//Reseting the waiting lobby arena, it's set in the above line.
+					waitingLobbyLocation = null;
+
+					ArenaSetup.setupStage.replace(player, 5);
+					ArenaSetup.firstRun = true;
+					return;
+				}
 				break;
 		}
 	}
 
-	private Location waitingLobby(PersistentDataContainer dataContainer, Player player, Location clickedBlockLocation) {
+	private Location setWaitingLobby(PersistentDataContainer dataContainer, Player player, Location clickedBlockLocation) {
 		NamespacedKey waitingLobbyKey = new NamespacedKey(CodoPB.getInstance(), "SET_WAITING_LOBBY");
-		NamespacedKey confirmKey = new NamespacedKey(CodoPB.getInstance(), "CONFIRM");
-
 
 		if (dataContainer.has(waitingLobbyKey)) {
-			placeHolderLocation = clickedBlockLocation;
+			waitingLobbyPlaceHolderLocation = clickedBlockLocation;
 			player.sendMessage(Component.text("Waiting Lobby Position set!", TextColor.color(0, 255, 0)));
 
 			return waitingLobbyLocation;
 		}
+		return null;
+	}
 
+	private Location confirmWaitingLobby(PersistentDataContainer dataContainer, Player player) {
+		NamespacedKey confirmKey = new NamespacedKey(CodoPB.getInstance(), "CONFIRM");
 		if (dataContainer.has(confirmKey)) {
-			if (placeHolderLocation == null) {
+			if (waitingLobbyPlaceHolderLocation == null) {
 				player.sendMessage(Component.text("Please select a waiting lobby!", TextColor.color(255, 0, 0)));
 				return null;
 			}
 			player.sendMessage(Component.text("Waiting Lobby set!", TextColor.color(0, 255, 0)));
-			return placeHolderLocation;
+			return waitingLobbyPlaceHolderLocation;
 		}
 		return null;
+	}
+
+	private Location setTeamLobby(PersistentDataContainer dataContainer, Player player, Location clickedBlockLocation) {
+		NamespacedKey teamOneKey = new NamespacedKey(CodoPB.getInstance(), "SET_TEAM_ONE");
+		NamespacedKey teamTwoKey = new NamespacedKey(CodoPB.getInstance(), "SET_TEAM_TWO");
+
+		if (dataContainer.has(teamOneKey)) {
+			teamOnePlaceHolder = clickedBlockLocation;
+			player.sendMessage(Component.text("Team One Spawn Set", TextColor.color(0, 255, 0)));
+			return teamOneLocation;
+		}else if(dataContainer.has(teamTwoKey)){
+			teamTwoPlaceHolder = clickedBlockLocation;
+			player.sendMessage(Component.text("Team Two Spawn Set", TextColor.color(0, 255, 0)));
+			return teamTwoLocation;
+		}
+		return null;
+	}
+
+	private boolean confirmTeamSpawns(PersistentDataContainer dataContainer, Player player) {
+		NamespacedKey confirmKey = new NamespacedKey(CodoPB.getInstance(), "CONFIRM");
+		if (dataContainer.has(confirmKey)) {
+			if (teamOnePlaceHolder == null) {
+				player.sendMessage(Component.text("Please select team ones spawn location!", TextColor.color(255, 0, 0)));
+				return false;
+			}else if (teamTwoPlaceHolder == null){
+				player.sendMessage(Component.text("Please select team twos spawn location!", TextColor.color(255, 0, 0)));
+				return false;
+			}
+			player.sendMessage(Component.text("Spawn locations set!", TextColor.color(0, 255, 0)));
+			ArenaSetup.spawnOne = teamOnePlaceHolder;
+			ArenaSetup.spawnTwo = teamTwoPlaceHolder;
+
+			return true;
+		}
+		return false;
 	}
 }
